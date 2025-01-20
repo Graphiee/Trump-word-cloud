@@ -3,7 +3,9 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Transcript Word Cloud</title>
+		<div>
+			<title>Trump Inauguration Speech 2025</title>
+		</div>
 		<script src="https://d3js.org/d3.v7.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/gh/jasondavies/d3-cloud/build/d3.layout.cloud.js"></script>
 		<link
@@ -70,13 +72,42 @@
 				border-radius: 8px;
 			}
 
-			.topics-container {
-				width: 300px;
-				padding: 15px;
+			.word-frequency-table {
+				width: 100%;
+				padding: 20px;
+				margin-top: 20px;
 				border: 1px solid var(--border-color);
 				border-radius: 8px;
 				background-color: var(--container-bg);
-				flex-shrink: 0; /* Prevents container from shrinking */
+			}
+
+			.word-frequency-table h2 {
+				font-size: 1.2em;
+				margin-bottom: 15px;
+				color: var(--text-color);
+			}
+
+			#frequency-table {
+				width: 100%;
+				max-width: 600px;
+				margin: 0 auto;
+				border-collapse: collapse;
+			}
+
+			#frequency-table th,
+			#frequency-table td {
+				padding: 8px;
+				text-align: left;
+				border-bottom: 1px solid var(--border-color);
+			}
+
+			#frequency-table th {
+				font-weight: bold;
+				color: var(--accent-color);
+			}
+
+			#frequency-table tr:hover {
+				background-color: rgba(52, 152, 219, 0.1);
 			}
 
 			.topics-title {
@@ -154,6 +185,40 @@
 				box-shadow: none;
 			}
 
+			.topics-container {
+				width: 300px;
+				height: 600px;
+				overflow-y: scroll;
+				padding: 15px;
+				border: 1px solid var(--border-color);
+				border-radius: 8px;
+				background-color: var(--container-bg);
+				flex-shrink: 0; /* Prevents container from shrinking */
+
+				/* Add custom scrollbar styling */
+				scrollbar-width: thin; /* For Firefox */
+				scrollbar-color: var(--accent-color) var(--border-color); /* For Firefox */
+			}
+
+			/* Webkit scrollbar styling (Chrome, Safari, Edge) */
+			.topics-container::-webkit-scrollbar {
+				width: 8px;
+			}
+
+			.topics-container::-webkit-scrollbar-track {
+				background: var(--border-color);
+				border-radius: 4px;
+			}
+
+			.topics-container::-webkit-scrollbar-thumb {
+				background-color: var(--accent-color);
+				border-radius: 4px;
+			}
+
+			.topics-container::-webkit-scrollbar-thumb:hover {
+				background-color: var(--hover-color);
+			}
+
 			.noUi-handle {
 				background-color: var(--accent-color);
 				border: none;
@@ -172,13 +237,24 @@
 					display: block;
 				}
 
+				.topics-container {
+					width: 100%;
+					height: 300px;
+					padding-left: 0px;
+					padding-right: 0px;
+					border: 0px;
+				}
+
 				#word-cloud {
 					height: 400px;
 					margin-bottom: 20px;
 				}
 
+				.word-frequency-table {
+					padding: 15px;
+				}
+
 				.topics-container {
-					width: auto;
 					display: none;
 				}
 
@@ -194,7 +270,7 @@
 	</head>
 	<body>
 		<div class="container">
-			<h1>Transcript Word Cloud</h1>
+			<h1>Trump Inauguration Speech 2025</h1>
 			<div class="slider-container">
 				<span id="timeRange">0:00 - 0:00</span>
 				<div id="range-slider"></div>
@@ -210,6 +286,49 @@
 				</div>
 			</div>
 		</div>
+
+		<div class="container" style="margin-top: 20px">
+			<div class="">
+				<h2>Top 10 Most Frequent Words</h2>
+				<table id="frequency-table">
+					<thead>
+						<tr>
+							<th>Word</th>
+							<th>Count</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- Table content will be dynamically added here -->
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<div class="container" style="margin-top: 20px; font-size: 12px">
+			<h4>Additional notes</h4>
+			<ul>
+				<li>
+					<p>
+						Transcription retrieved from OpenAI's Whisper API. Topics generated
+						using
+						<a href="https://descript.com">descript.com</a>
+					</p>
+				</li>
+			</ul>
+			<ul>
+				<li>
+					<a href="https://www.whitehouse.gov/inauguration/">Speech source</a>
+				</li>
+			</ul>
+			<ul>
+				<li>
+					<a href="https://www.whitehouse.gov/inauguration/"
+						>Transcript cleaning script</a
+					>
+				</li>
+			</ul>
+		</div>
+
 		<script src="index.js"></script>
 		<script>
 			// Mobile topics toggle
