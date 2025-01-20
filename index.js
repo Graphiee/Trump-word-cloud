@@ -471,11 +471,14 @@ function updateWordCloud(startTime, endTime) {
 
 	const layout = d3.layout
 		.cloud()
-		.size([width * 1.2, height * 1.2])
+		.size([
+			width * (window.innerWidth <= 768 ? 1.5 : 1.2),
+			height * (window.innerWidth <= 768 ? 1.5 : 1.2),
+		])
 		.words(wordData)
-		.padding(10)
+		.padding(window.innerWidth <= 768 ? 5 : 10)
 		.rotate(() => ~~(Math.random() * 2) * 90)
-		.fontSize((d) => d.size)
+		.fontSize((d) => (window.innerWidth <= 768 ? d.size * 0.7 : d.size))
 		.on("end", draw);
 
 	layout.start();
