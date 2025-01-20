@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Transcript Word Cloud</title>
+		<script src="https://d3js.org/d3.v7.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/jasondavies/d3-cloud/build/d3.layout.cloud.js"></script>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/nouislider@14.6.3/distribute/nouislider.min.css"
+		/>
+		<script src="https://cdn.jsdelivr.net/npm/nouislider@14.6.3/distribute/nouislider.min.js"></script>
+		<style>
+			:root {
+				--bg-color: #1a1a1a;
+				--container-bg: #242424;
+				--text-color: #e0e0e0;
+				--border-color: #3a3a3a;
+				--accent-color: #3498db;
+				--hover-color: #2980b9;
+			}
+
+			body {
+				font-family: Arial, sans-serif;
+				margin: 0;
+				padding: 20px;
+				background-color: var(--bg-color);
+				color: var(--text-color);
+			}
+
+			.container {
+				max-width: 1400px;
+				margin: 0 auto;
+				background-color: var(--container-bg);
+				padding: 20px;
+				border-radius: 8px;
+				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+			}
+
+			h1 {
+				text-align: center;
+				color: var(--text-color);
+				margin-bottom: 20px;
+			}
+
+			.slider-container {
+				margin: 0 20px 30px 20px;
+			}
+
+			#timeRange {
+				text-align: center;
+				display: block;
+				margin-bottom: 10px;
+				font-weight: bold;
+				color: var(--text-color);
+			}
+
+			.content-wrapper {
+				display: flex;
+				gap: 20px;
+				position: relative;
+			}
+
+			#word-cloud {
+				flex: 1;
+				min-width: 0; /* Prevents flex item from overflowing */
+				height: 600px;
+				background-color: var(--container-bg);
+				border-radius: 8px;
+			}
+
+			.topics-container {
+				width: 300px;
+				padding: 15px;
+				border: 1px solid var(--border-color);
+				border-radius: 8px;
+				background-color: var(--container-bg);
+				flex-shrink: 0; /* Prevents container from shrinking */
+			}
+
+			.topics-title {
+				font-size: 1.2em;
+				margin-bottom: 15px;
+				color: var(--text-color);
+			}
+
+			.topics-list {
+				display: flex;
+				flex-direction: column;
+				gap: 10px;
+			}
+
+			.topic-button {
+				padding: 12px 16px;
+				background-color: transparent;
+				border: 1px solid var(--accent-color);
+				border-radius: 8px;
+				color: var(--text-color);
+				cursor: pointer;
+				transition: all 0.2s ease;
+				text-align: left;
+				display: flex;
+				flex-direction: column;
+				gap: 5px;
+			}
+
+			.topic-time {
+				font-size: 0.85em;
+				color: var(--accent-color);
+			}
+
+			.topic-button:hover {
+				background-color: var(--hover-color);
+				border-color: var(--hover-color);
+				color: white;
+			}
+
+			.topic-button.active {
+				background-color: var(--accent-color);
+				border-color: var(--accent-color);
+				color: white;
+			}
+
+			.topic-button.active .topic-time {
+				color: rgba(255, 255, 255, 0.8);
+			}
+
+			.noUi-connect {
+				background: var(--accent-color);
+			}
+
+			#range-slider {
+				height: 10px;
+				margin: 30px 0;
+			}
+
+			.toggle-topics {
+				display: none;
+				width: 100%;
+				padding: 8px 16px;
+				background-color: var(--accent-color);
+				border: none;
+				border-radius: 4px;
+				color: white;
+				cursor: pointer;
+				margin-bottom: 10px;
+			}
+
+			/* Dark theme for noUiSlider */
+			.noUi-target {
+				background-color: var(--border-color);
+				border: none;
+				box-shadow: none;
+			}
+
+			.noUi-handle {
+				background-color: var(--accent-color);
+				border: none;
+				box-shadow: none;
+				border-radius: 50%;
+			}
+
+			.noUi-handle:before,
+			.noUi-handle:after {
+				display: none;
+			}
+
+			/* Mobile styles */
+			@media screen and (max-width: 768px) {
+				.content-wrapper {
+					display: block;
+				}
+
+				#word-cloud {
+					height: 400px;
+					margin-bottom: 20px;
+				}
+
+				.topics-container {
+					width: auto;
+					display: none;
+				}
+
+				.topics-container.expanded {
+					display: block;
+				}
+
+				.toggle-topics {
+					display: block;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>Transcript Word Cloud</h1>
+			<div class="slider-container">
+				<span id="timeRange">0:00 - 0:00</span>
+				<div id="range-slider"></div>
+			</div>
+			<button class="toggle-topics">Show Topics</button>
+			<div class="content-wrapper">
+				<div id="word-cloud"></div>
+				<div class="topics-container">
+					<div class="topics-title">Topics</div>
+					<div id="topics-list" class="topics-list">
+						<!-- Topics will be dynamically added here -->
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="index.js"></script>
+		<script>
+			// Mobile topics toggle
+			const toggleButton = document.querySelector(".toggle-topics");
+			const topicsContainer = document.querySelector(".topics-container");
+
+			toggleButton.addEventListener("click", () => {
+				topicsContainer.classList.toggle("expanded");
+				toggleButton.textContent = topicsContainer.classList.contains(
+					"expanded"
+				)
+					? "Hide Topics"
+					: "Show Topics";
+			});
+		</script>
+	</body>
+</html>
